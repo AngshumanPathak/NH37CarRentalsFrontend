@@ -1,0 +1,9 @@
+{
+    "rewrites": [
+      {
+        "source": "/api/(.*)",
+        "destination": "https://nh-37-car-rentals-ae755c1171a6.herokuapp.com/api/$1"
+      }
+    ]
+  }
+  
