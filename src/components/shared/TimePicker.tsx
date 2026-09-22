@@ -1,11 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 
-interface TimePickerProps {
-  value: string;
-  onChange: (value: string) => void;
-  disabled?: boolean;
-  isTimeDisabled?: (time: string) => boolean;
-}
 
 const TIME_OPTIONS = Array.from({ length: 48 }, (_, index) => {
   const hours = Math.floor(index / 2);

@@ -2,7 +2,7 @@
 import { useState } from "react";
 
 import { SearchBar } from "../shared/searchBar";
-import CarGrid from "../Cars/carGrid";
+import CarGrid from "../Cars/CarGrid";
 
 import { SearchFilters } from "../../redux/Search/searchTypes";
 
@@ -12,7 +12,7 @@ const WithDriver = () => {
   );
 
   const handleSearch = (filters: SearchFilters) => {
-    console.log("Search filters:", filters);
+    console.log("Search filters:", searchFilters);
 
     setSearchFilters(filters);
   };

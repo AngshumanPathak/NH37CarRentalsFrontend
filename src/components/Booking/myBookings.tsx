@@ -651,7 +651,7 @@ export default function MyBookings() {
 
 function BookingCard({
   booking,
-  onView,
+  
   onPayment,
 }: {
   booking: Booking;

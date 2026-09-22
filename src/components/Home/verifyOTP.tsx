@@ -312,6 +312,6 @@ const handleResendOtp = async () => {
   );
 };
 
-function setTimeLeft(arg0: number) {
+function setTimeLeft(_arg0: number) {
   throw new Error("Function not implemented.");
 }

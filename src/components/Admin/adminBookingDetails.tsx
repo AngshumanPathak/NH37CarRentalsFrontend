@@ -323,6 +323,7 @@ const [rejectError, setRejectError] =
     setRejectError(
       "A rejection reason is required."
     );
+    console.log(rejectError)
     return;
   }
 
