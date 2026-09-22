@@ -121,7 +121,7 @@ export const deleteBooking = async (bookingData: { vehicleId: string; bookedFrom
 
 
 const api = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: import.meta.env.BASE_URL,
   withCredentials: true,
 
 });
