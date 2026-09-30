@@ -8,6 +8,16 @@ const VITE_API_BASE_URL = import.meta.env.VITE_BASE_URL;
 
 console.log(VITE_API_BASE_URL);
 
+const api = axios.create({
+  baseURL: import.meta.env.VITE_BASE_URL,
+  withCredentials: true,
+
+});
+
+export default api;
+
+
+
 export const addVehicle = async (vehicleData: any) => {
     try {
         const formData = new FormData();
@@ -120,13 +130,7 @@ export const deleteBooking = async (bookingData: { vehicleId: string; bookedFrom
 };
 
 
-const api = axios.create({
-  baseURL: import.meta.env.VITE_BASE_URL,
-  withCredentials: true,
 
-});
-
-export default api;
 
 
 export const getCars = async (

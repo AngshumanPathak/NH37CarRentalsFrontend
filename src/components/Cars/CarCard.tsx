@@ -80,7 +80,7 @@ export default function CarCard({
       <div className="relative aspect-[16/10] overflow-hidden bg-zinc-900">
         <img
           src={mainImage}
-          alt={`${car.brand} ${car.model}`}
+          alt={`${car.brand} ${car.name}`}
           className="
             h-full w-full object-cover
             transition-transform duration-500
