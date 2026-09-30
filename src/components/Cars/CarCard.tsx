@@ -135,7 +135,7 @@ export default function CarCard({
           </p>
 
           <h3 className="mt-1 truncate text-2xl font-bold text-white sm:text-3xl">
-            {car.model}
+            {car.name}
           </h3>
         </div>
       </div>
