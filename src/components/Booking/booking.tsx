@@ -986,6 +986,12 @@ Hello, I have submitted my booking reservation and documents. Please verify and 
                 : "Check Availability"}
             </button>
 
+            {formError && (
+  <div className="mt-3 rounded-xl border border-red-400/20 bg-red-400/[0.06] px-4 py-3 text-sm leading-5 text-red-300">
+    {formError}
+  </div>
+)}
+
             <p className="mt-3 text-center text-[10px] leading-5 text-gray-600">
               Your booking will remain pending until NH37 Car Rentals verifies and confirms it.
             </p>
