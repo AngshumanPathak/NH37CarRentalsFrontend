@@ -22,7 +22,7 @@ const Contacts = () => {
 
         <p className="flex items-center gap-3">
           📧 <span className="font-medium">Email:</span>  
-          <a href="mailto:bishalboro268@gmail.com" className="text-yellow-400 hover:underline">bishalboro268@gmail.com</a>
+          <a href="mailto:nh37carrentals@gmail.com" className="text-yellow-400 hover:underline">nh37carrentals@gmail.com</a>
         </p>
 
         <p className="flex items-start gap-3">

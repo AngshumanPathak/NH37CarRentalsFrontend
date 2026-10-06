@@ -7,7 +7,7 @@ const center = { lat: 26.1078715, lng: 91.8035368 };
 export const Map = () => {
 
     const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY; 
-    console.log(googleMapsApiKey);
+  
 
     const openGoogleMaps = () => {
         const destinationUrl = `https://www.google.com/maps/dir/?api=1&destination=${center.lat},${center.lng}`;
