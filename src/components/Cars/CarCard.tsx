@@ -1,10 +1,6 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Car, RentalMode } from "./car.types";
-import {
-  CarPricing,
-  CarPricingDetails,
-} from "./CarPricing";
+import { CarPricing, CarPricingDetails } from "./CarPricing";
 
 interface CarCardProps {
   car: Car;
@@ -16,19 +12,14 @@ const getStatusStyles = (status: string) => {
   switch (status) {
     case "AVAILABLE":
       return "border-yellow-300/30 bg-yellow-300/10 text-yellow-300";
-
     case "MAINTENANCE":
       return "border-yellow-500/30 bg-yellow-500/10 text-yellow-400";
-
     case "BOOKED":
       return "border-orange-400/30 bg-orange-400/10 text-orange-300";
-
     case "ON_ROUTE":
       return "border-blue-400/30 bg-blue-400/10 text-blue-300";
-
     case "WITH_CUSTOMER":
       return "border-purple-400/30 bg-purple-400/10 text-purple-300";
-
     case "OUT_OF_SERVICE":
     case "UNAVAILABLE":
     default:
@@ -43,24 +34,30 @@ const formatStatus = (status: string) => {
     .replace(/\b\w/g, (char) => char.toUpperCase());
 };
 
-export default function CarCard({
-  car,
-  rentalMode,
-  onBook,
-}: CarCardProps) {
-  const [expanded, setExpanded] = useState(false);
+const FALLBACK_IMAGE = "https://placehold.co/800x500/111111/FDE047?text=No+Image";
 
-  const mainImage =
-    car.images?.[0]?.url ||
-    "https://placehold.co/800x500/111111/FDE047?text=No+Image";
+export default function CarCard({ car, rentalMode, onBook }: CarCardProps) {
+  const [expanded, setExpanded] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  const images = car.images && car.images.length > 0 ? car.images : [{ url: FALLBACK_IMAGE }];
+  const hasMultipleImages = images.length > 1;
+
+  // Auto-cycle through images with a slow interval; pauses on hover
+  useEffect(() => {
+    if (!hasMultipleImages || isPaused) return;
+
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % images.length);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [hasMultipleImages, isPaused, images.length]);
 
   const isAvailable = car.status === "AVAILABLE";
-
   const isSelfDrive = rentalMode === "SELF_DRIVE";
-
-  const bookingLabel = isSelfDrive
-    ? "Book This Car"
-    : "Book With Driver";
+  const bookingLabel = isSelfDrive ? "Book This Car" : "Book With Driver";
 
   return (
     <article
@@ -75,23 +72,29 @@ export default function CarCard({
         hover:border-yellow-300/30
         hover:bg-white/[0.04]
       "
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
     >
-      {/* IMAGE */}
+      {/* IMAGE CAROUSEL */}
       <div className="relative aspect-[16/10] overflow-hidden bg-zinc-900">
-        <img
-          src={mainImage}
-          alt={`${car.brand} ${car.name}`}
-          className="
-            h-full w-full object-cover
-            transition-transform duration-500
-            group-hover:scale-105
-          "
-        />
+        {images.map((img, idx) => (
+          <img
+            key={img.url || idx}
+            src={img.url || FALLBACK_IMAGE}
+            alt={`${car.brand} ${car.name} - view ${idx + 1}`}
+            className={`
+              absolute inset-0 h-full w-full object-cover
+              transition-all duration-1000 ease-in-out
+              group-hover:scale-105
+              ${idx === currentImageIndex ? "opacity-100 scale-100 z-0" : "opacity-0 scale-100 -z-10 pointer-events-none"}
+            `}
+          />
+        ))}
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-transparent" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-black/10 to-transparent" />
 
         {/* STATUS */}
-        <div className="absolute left-3 top-3 sm:left-4 sm:top-4">
+        <div className="absolute left-3 top-3 z-10 sm:left-4 sm:top-4">
           <span
             className={`
               inline-flex items-center gap-2
@@ -107,33 +110,46 @@ export default function CarCard({
             <span
               className={`
                 h-1.5 w-1.5 rounded-full
-                ${
-                  isAvailable
-                    ? "bg-yellow-300"
-                    : "bg-current"
-                }
+                ${isAvailable ? "bg-yellow-300" : "bg-current"}
               `}
             />
-
             {formatStatus(car.status)}
           </span>
         </div>
 
-        {/* IMAGE COUNT */}
-        {car.images && car.images.length > 1 && (
-          <div className="absolute right-3 top-3 sm:right-4 sm:top-4">
+        {/* IMAGE COUNT & SLIDE INDICATORS */}
+        {hasMultipleImages && (
+          <div className="absolute right-3 top-3 z-10 flex flex-col items-end gap-1.5 sm:right-4 sm:top-4">
             <span className="rounded-full border border-white/10 bg-black/70 px-3 py-1.5 text-[10px] font-semibold text-white backdrop-blur-md sm:text-xs">
-              {car.images.length} Photos
+              {currentImageIndex + 1} / {images.length} Photos
             </span>
+
+            {/* Manual navigation dots */}
+            <div className="flex gap-1 rounded-full bg-black/40 px-2 py-1 backdrop-blur-md">
+              {images.map((_, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  aria-label={`Go to image ${idx + 1}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentImageIndex(idx);
+                  }}
+                  className={`
+                    h-1.5 rounded-full transition-all duration-300
+                    ${idx === currentImageIndex ? "w-4 bg-yellow-300" : "w-1.5 bg-white/40 hover:bg-white/70"}
+                  `}
+                />
+              ))}
+            </div>
           </div>
         )}
 
         {/* NAME */}
-        <div className="absolute bottom-4 left-4 right-4 sm:bottom-5 sm:left-5 sm:right-5">
+        <div className="pointer-events-none absolute bottom-4 left-4 right-4 z-10 sm:bottom-5 sm:left-5 sm:right-5">
           <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-yellow-300 sm:text-xs">
             {car.brand}
           </p>
-
           <h3 className="mt-1 truncate text-2xl font-bold text-white sm:text-3xl">
             {car.name}
           </h3>
@@ -153,34 +169,18 @@ export default function CarCard({
             py-3
           "
         >
-          <Spec
-            label="Seats"
-            value={car.seats ? `${car.seats}` : "—"}
-          />
-
-          <Spec
-            label="Fuel"
-            value={car.fuelType || "—"}
-          />
-
-          <Spec
-            label="Gear"
-            value={car.transmission || "—"}
-          />
+          <Spec label="Seats" value={car.seats ? `${car.seats}` : "—"} />
+          <Spec label="Fuel" value={car.fuelType || "—"} />
+          <Spec label="Gear" value={car.transmission || "—"} />
         </div>
 
         {/* PRICING */}
-        <CarPricing
-          car={car}
-          rentalMode={rentalMode}
-        />
+        <CarPricing car={car} rentalMode={rentalMode} />
 
         {/* EXPAND */}
         <button
           type="button"
-          onClick={() =>
-            setExpanded((prev) => !prev)
-          }
+          onClick={() => setExpanded((prev) => !prev)}
           className="
             mt-4 flex w-full items-center
             justify-between
@@ -192,12 +192,7 @@ export default function CarCard({
             hover:text-yellow-300
           "
         >
-          <span>
-            {expanded
-              ? "Hide details"
-              : "View all details"}
-          </span>
-
+          <span>{expanded ? "Hide details" : "View all details"}</span>
           <span
             className={`
               flex h-8 w-8 shrink-0
@@ -207,11 +202,7 @@ export default function CarCard({
               bg-white/[0.04]
               text-yellow-300
               transition-transform duration-300
-              ${
-                expanded
-                  ? "rotate-180"
-                  : ""
-              }
+              ${expanded ? "rotate-180" : ""}
             `}
           >
             <svg
@@ -242,73 +233,38 @@ export default function CarCard({
         >
           <div className="overflow-hidden">
             <div className="space-y-5 border-t border-white/10 pt-5">
-              {/* DESCRIPTION */}
               {car.description && (
                 <div>
                   <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500">
                     About this car
                   </p>
-
                   <p className="text-sm leading-6 text-gray-400">
                     {car.description}
                   </p>
                 </div>
               )}
 
-              {/* VEHICLE DETAILS */}
               <div>
                 <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500">
                   Vehicle Details
                 </p>
-
                 <div className="grid grid-cols-2 gap-2.5">
-                  <Detail
-                    label="Brand"
-                    value={car.brand}
-                  />
-
-                  <Detail
-                    label="Model"
-                    value={car.model}
-                  />
-
-                  <Detail
-                    label="Year"
-                    value={car.year || "—"}
-                  />
-
-                  <Detail
-                    label="Seats"
-                    value={car.seats || "—"}
-                  />
-
-                  <Detail
-                    label="Fuel Type"
-                    value={car.fuelType || "—"}
-                  />
-
-                  <Detail
-                    label="Transmission"
-                    value={
-                      car.transmission || "—"
-                    }
-                  />
+                  <Detail label="Brand" value={car.brand} />
+                  <Detail label="Model" value={car.model} />
+                  <Detail label="Year" value={car.year || "—"} />
+                  <Detail label="Seats" value={car.seats || "—"} />
+                  <Detail label="Fuel Type" value={car.fuelType || "—"} />
+                  <Detail label="Transmission" value={car.transmission || "—"} />
                 </div>
               </div>
 
-              {/* RENTAL PRICING DETAILS */}
-              <CarPricingDetails
-                car={car}
-                rentalMode={rentalMode}
-              />
+              <CarPricingDetails car={car} rentalMode={rentalMode} />
 
-              {/* REGISTRATION */}
               <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-4">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <span className="text-xs font-semibold text-gray-500">
                     Registration
                   </span>
-
                   <span className="text-sm font-bold text-white">
                     {car.registrationNumber}
                   </span>
@@ -345,28 +301,19 @@ export default function CarCard({
             }
           `}
         >
-          {isAvailable
-            ? bookingLabel
-            : "Currently Unavailable"}
+          {isAvailable ? bookingLabel : "Currently Unavailable"}
         </button>
       </div>
     </article>
   );
 }
 
-function Spec({
-  label,
-  value,
-}: {
-  label: string;
-  value: string | number;
-}) {
+function Spec({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="min-w-0 px-2 text-center sm:px-3">
       <p className="truncate text-[9px] font-bold uppercase tracking-wider text-gray-600 sm:text-[10px]">
         {label}
       </p>
-
       <p className="mt-1 truncate text-xs font-bold text-gray-200 sm:text-sm">
         {value}
       </p>
@@ -374,23 +321,15 @@ function Spec({
   );
 }
 
-function Detail({
-  label,
-  value,
-}: {
-  label: string;
-  value: string | number;
-}) {
+function Detail({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="rounded-xl border border-white/10 bg-white/[0.025] p-3">
       <p className="text-[9px] font-bold uppercase tracking-wider text-gray-600">
         {label}
       </p>
-
       <p className="mt-1 truncate text-sm font-bold capitalize text-gray-200">
         {value}
       </p>
     </div>
   );
 }
-
