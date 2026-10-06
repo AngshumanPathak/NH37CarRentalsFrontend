@@ -28,7 +28,7 @@ import {
 } from "../../lib/apis/upload.api";
 
 // ⚠️️ Replace with your target business WhatsApp phone number (with country code, no symbols)
-const OWNER_WHATSAPP_NUMBER = "919876543210";
+
 
 interface CarImage {
   id?: string;
@@ -518,7 +518,7 @@ export default function Booking() {
 --------------------------------
 Hello, I have submitted my booking reservation and documents. Please verify and confirm my booking.`;
 
-    return `https://wa.me/${OWNER_WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+    return `https://wa.me/${import.meta.env.VITE_OWNER_WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
   };
 
   if (isLoadingCar) {
