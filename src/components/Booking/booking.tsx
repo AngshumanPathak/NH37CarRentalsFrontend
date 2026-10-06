@@ -428,6 +428,8 @@ export default function Booking() {
   };
 
   const handleCreateBooking = async () => {
+
+    
     if (!validateBooking()) return;
     if (!carId || !pickupAt || !returnAt) return;
 
@@ -504,6 +506,8 @@ export default function Booking() {
 
   // Helper to compose WhatsApp message URL
   const getWhatsAppShareUrl = (bookingId: string) => {
+
+    const OWNER_PHONE_NUMBER = import.meta.env.VITE_OWNER_WHATSAPP_NUMBER;
     if (!car || !pickupAt || !returnAt) return "#";
 
     const msg = `*NEW BOOKING RESERVATION* 🚗
@@ -518,7 +522,7 @@ export default function Booking() {
 --------------------------------
 Hello, I have submitted my booking reservation and documents. Please verify and confirm my booking.`;
 
-    return `https://wa.me/${import.meta.env.VITE_OWNER_WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+    return `https://wa.me/${OWNER_PHONE_NUMBER}?text=${encodeURIComponent(msg)}`;
   };
 
   if (isLoadingCar) {
