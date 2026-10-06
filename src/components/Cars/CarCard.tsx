@@ -151,7 +151,7 @@ export default function CarCard({ car, rentalMode, onBook }: CarCardProps) {
             {car.brand}
           </p>
           <h3 className="mt-1 truncate text-2xl font-bold text-white sm:text-3xl">
-            {car.name}
+            {car.model}
           </h3>
         </div>
       </div>
