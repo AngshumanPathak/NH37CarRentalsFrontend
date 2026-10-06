@@ -32,7 +32,7 @@ export function CarPricing({
 
   const label = isSelfDrive
     ? "Self Drive"
-    : "With Driver";
+    : "With Driver (Base Price)";
 
   return (
     <div className="mt-4 rounded-2xl border border-yellow-300/20 bg-yellow-300/[0.06] p-4">
