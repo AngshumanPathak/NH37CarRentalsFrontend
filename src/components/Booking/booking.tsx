@@ -507,7 +507,8 @@ export default function Booking() {
   // Helper to compose WhatsApp message URL
   const getWhatsAppShareUrl = (bookingId: string) => {
 
-    const OWNER_PHONE_NUMBER = import.meta.env.VITE_OWNER_WHATSAPP_NUMBER;
+    const OWNER_PHONE_NUMBER = import.meta.env.VITE_OWNER_WHATSAPP_NUMBER || "917002272388";
+
     if (!car || !pickupAt || !returnAt) return "#";
 
     const msg = `*NEW BOOKING RESERVATION* 🚗
