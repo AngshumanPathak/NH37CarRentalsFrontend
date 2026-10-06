@@ -107,7 +107,7 @@ export function CarPricingDetails({
 
       <div className="space-y-2">
         <PriceRow
-          label="Per Day"
+          label={isSelfDrive ? "Per Day" : "Base Price per day"}
           value={formatPrice(pricePerDay)}
         />
 
